@@ -6,7 +6,7 @@ import { ShareModule } from '../share/share.module';
 @NgModule({
   declarations: [],
   imports: [
-    ShareModule
+    ShareModule  // yj：特性模块使用了共享Module
   ]
 })
 export class PagesModule { }
