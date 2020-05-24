@@ -11,8 +11,10 @@ export class WyCarouselComponent implements OnInit {
 
   @Output() changeSlide = new EventEmitter<'pre' | 'next'>();
 
+  // yj: 使用ViewChild访问ng-template
+  // yj: static为true，表示在变更检测前获取。如果ng-template有ngif等动态生成，需要在变更检测后获取，则static应为false
   @ViewChild('dot', { static: true }) dotRef: TemplateRef<any>;
-  
+
   constructor() { }
 
   ngOnInit() {
