@@ -26,6 +26,7 @@ export class SingerService {
 
   constructor(private http: HttpClient, @Inject(API_CONFIG) private uri: string) { }
 
+  /** yj: 也可以用new HttpParams({ fromObject: args }) 处理args，去除undefined等无效值 */
   getEnterSinger(args: SingerParams = defaultParams): Observable<Singer[]> {
     const params = new HttpParams({ fromString: queryString.stringify(args) });
     return this.http.get(this.uri + 'artist/list', { params })
