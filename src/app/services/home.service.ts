@@ -9,7 +9,8 @@ import { map } from 'rxjs/internal/operators';
   providedIn: ServicesModule
 })
 export class HomeService {
-
+  // yj: 使用@Inject指定自定义提供者
+  // 自定义提供者让你可以为隐式依赖提供一个具体的实现，比如内置浏览器 API
   constructor(private http: HttpClient, @Inject(API_CONFIG) private uri: string) { }
 
   getBanners(): Observable<Banner[]> {
