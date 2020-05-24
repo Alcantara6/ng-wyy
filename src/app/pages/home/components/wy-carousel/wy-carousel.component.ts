@@ -4,7 +4,7 @@ import { Component, OnInit, TemplateRef, ViewChild, Input, Output, EventEmitter,
   selector: 'app-wy-carousel',
   templateUrl: './wy-carousel.component.html',
   styleUrls: ['./wy-carousel.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush  // yj：变更检测策略，简单组件，只在输入属性变化时检测组件树
 })
 export class WyCarouselComponent implements OnInit {
   @Input() activeIndex = 0;
@@ -20,6 +20,7 @@ export class WyCarouselComponent implements OnInit {
   ngOnInit() {
   }
 
+  // yj: 字符串联合类型
   onChangeSlide(type: 'pre' | 'next') {
     this.changeSlide.emit(type);
   }
