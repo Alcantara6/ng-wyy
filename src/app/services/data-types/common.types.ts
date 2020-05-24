@@ -8,6 +8,7 @@ export type Banner = {
 export type HotTag = {
   id: number;
   name: string;
+  /** 越小，位置越靠前 */
   position: number;
 }
 

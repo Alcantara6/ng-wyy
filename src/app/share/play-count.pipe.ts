@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-
+/** 项目各处会用到的管道 */
 @Pipe({
   name: 'playCount'
 })
