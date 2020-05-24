@@ -17,6 +17,6 @@ export class HomeResolverService implements Resolve<HomeDataType> {
       this.homeServe.getHotTags(),
       this.homeServe.getPerosonalSheetList(),
       this.singerServe.getEnterSinger()
-    ]).pipe(first());
+    ]).pipe(first());  // yj: forkJoin, first, take操作符
   }
 }

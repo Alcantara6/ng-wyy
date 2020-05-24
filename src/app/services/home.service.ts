@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Banner, HotTag, SongSheet } from './data-types/common.types';
 import { map } from 'rxjs/internal/operators';
 
+// yj: 后端请求服务中不一定就只是调用api返回结果，可以有一定的数据预先处理
 @Injectable({
   providedIn: ServicesModule
 })

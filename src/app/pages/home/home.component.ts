@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private route: ActivatedRoute
   ) {
+    // yj: 虽然结构获取更简洁，但是不能在组件中对返回错误做出反馈（数据处理都在服务中）
     this.route.data.pipe(map(res => res.homeDatas)).subscribe(([banners, hotTags, songSheetList, singers]) => {
       this.banners = banners;
       this.hotTags = hotTags;
