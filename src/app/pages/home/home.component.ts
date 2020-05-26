@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
     this.nzCarousel[type]();
   }
 
-
+  /** 点击歌单播放按钮，获取所含歌曲（含歌曲url） */
   onPlaySheet(id: number) {
     console.log('id :', id);
     this.sheetServe.playSheet(id).subscribe(res => {

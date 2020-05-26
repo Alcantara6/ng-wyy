@@ -27,8 +27,10 @@ export class SheetService {
     .pipe(map((res: { playlist: SongSheet }) => res.playlist));
   }
 
-
+  /** 点击歌单，获取歌单详情（含有的歌曲tracks） */
+  // 接口设计值得商榷，tracks中直接提供url，就不需要再去调接口组装url了
   playSheet(id: number): Observable<Song[]> {
+    /** pluck, switchMap操作符 */
     return this.getSongSheetDetail(id)
     .pipe(pluck('tracks'), switchMap(tracks => this.songServe.getSongList(tracks)));
   }
