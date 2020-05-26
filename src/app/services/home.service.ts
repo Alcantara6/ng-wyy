@@ -20,6 +20,7 @@ export class HomeService {
   }
 
 
+  /** yj: 获取歌单类型：流行、摇滚... */
   getHotTags(): Observable<HotTag[]> {
     return this.http.get(this.uri + 'playlist/hot')
       .pipe(map((res: { tags: HotTag[] }) => {
@@ -27,7 +28,7 @@ export class HomeService {
       }));
   }
 
-
+  /** yj: 获取歌单列表 */
   getPerosonalSheetList(): Observable<SongSheet[]> {
     return this.http.get(this.uri + 'personalized')
       .pipe(map((res: { result: SongSheet[] }) => res.result.slice(0, 16)));

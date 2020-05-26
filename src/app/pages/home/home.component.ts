@@ -3,6 +3,7 @@ import { Banner, HotTag, SongSheet, Singer } from '../../services/data-types/com
 import { NzCarouselComponent } from 'ng-zorro-antd';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs/internal/operators';
+import { SheetService } from 'src/app/services/sheet.service';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +20,8 @@ export class HomeComponent implements OnInit {
   @ViewChild(NzCarouselComponent, { static: true }) private nzCarousel: NzCarouselComponent;
 
   constructor(
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private sheetServe: SheetService
   ) {
     // yj: 虽然结构获取更简洁，但是不能在组件中对返回错误做出反馈（数据处理都在服务中）
     this.route.data.pipe(map(res => res.homeDatas)).subscribe(([banners, hotTags, songSheetList, singers]) => {
@@ -39,6 +41,14 @@ export class HomeComponent implements OnInit {
 
   onChangeSlide(type: 'pre' | 'next') {
     this.nzCarousel[type]();
+  }
+
+  /** 点击歌单播放按钮，获取所含歌曲（含歌曲url） */
+  onPlaySheet(id: number) {
+    console.log('id :', id);
+    this.sheetServe.playSheet(id).subscribe(res => {
+      console.log('res :', res);
+    });
   }
 
 }
