@@ -19,6 +19,8 @@ export class SheetService {
     private songServe: SongService
   ) { }
 
+  /** yj: 获取歌单详情 */
+  // new HttpParams.set方法
   getSongSheetDetail(id: number): Observable<SongSheet> {
     const params = new HttpParams().set('id', id.toString());
     return this.http.get(this.uri + 'playlist/detail', { params })

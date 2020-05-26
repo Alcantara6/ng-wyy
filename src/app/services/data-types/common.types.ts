@@ -28,8 +28,11 @@ export type Song = {
   id: number;
   name: string;
   url: string;
+  /** 歌手 */
   ar: Singer[];
+  /** 专辑。应该提取为一个interface */
   al: { id: number; name: string; picUrl: string };
+  /** 时长 */
   dt: number;
 }
 

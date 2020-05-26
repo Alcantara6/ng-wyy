@@ -26,6 +26,7 @@ export class SingerService {
 
   constructor(private http: HttpClient, @Inject(API_CONFIG) private uri: string) { }
 
+  /** yj: 获取入驻歌手 */
   getEnterSinger(args: SingerParams = defaultParams): Observable<Singer[]> {
     const params = new HttpParams({ fromString: queryString.stringify(args) });
     return this.http.get(this.uri + 'artist/list', { params })
