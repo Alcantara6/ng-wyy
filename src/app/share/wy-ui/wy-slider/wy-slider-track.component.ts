@@ -15,6 +15,7 @@ export class WySliderTrackComponent implements OnInit, OnChanges {
   ngOnInit() {
   }
 
+  // 根据方向，绑定样式变化
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['wyLength']) {
       if (this.wyVertical) {

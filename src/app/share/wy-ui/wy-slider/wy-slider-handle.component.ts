@@ -16,6 +16,7 @@ export class WySliderHandleComponent implements OnInit, OnChanges {
   ngOnInit() {
   }
 
+  // 根据方向，绑定样式变化
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['wyOffset']) {
       this.style[this.wyVertical ? 'bottom' : 'left'] = this.wyOffset + '%';
