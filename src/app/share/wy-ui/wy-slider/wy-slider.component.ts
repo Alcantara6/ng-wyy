@@ -21,10 +21,12 @@ export class WySliderComponent implements OnInit {
   private dragMove$: Observable<number>;
   private dragEnd$: Observable<Event>;
 
-
+  // yj: 另一种获取DOM的方式
+  // constructor(private el: ElementRef) {}
   constructor(@Inject(DOCUMENT) private doc: Document) { }
 
   ngOnInit() {
+    // console.log(this.el.nativeElement);
     this.sliderDom = this.wySlider.nativeElement;
     this.createDraggingObservables();
   }
@@ -55,7 +57,7 @@ export class WySliderComponent implements OnInit {
       .pipe(
         filter(filerFunc),
         tap(sliderEvent),
-        pluck(...pluckKey),
+        pluck(...pluckKey),  // yj: 新版rxjs废弃pluck，使用map
         map((position: number) => this.findClosestValue(position))
       );
 
@@ -63,7 +65,7 @@ export class WySliderComponent implements OnInit {
       source.moveResolved$ = fromEvent(this.doc, move).pipe(
         filter(filerFunc),
         tap(sliderEvent),
-        pluck(...pluckKey),
+        pluck(...pluckKey), // yj: 新版rxjs废弃pluck，使用map
         distinctUntilChanged(),
         map((position: number) => this.findClosestValue(position)),
         takeUntil(source.end$)
