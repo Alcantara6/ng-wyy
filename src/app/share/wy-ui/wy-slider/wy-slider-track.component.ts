@@ -4,12 +4,13 @@ import { WySliderStyle } from './wy-slider-types';
 /** 极简单的模板，用template选项 */
 @Component({
   selector: 'app-wy-slider-track',
-  template: `<div class="wy-slider-track" [ngStyle]="style"></div>`,
+  template: `<div class="wy-slider-track" [class.buffer]="wyBuffer" [ngStyle]="style"></div>`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WySliderTrackComponent implements OnInit, OnChanges {
   @Input() wyVertical = false;
-  @Input() wyLength: number;  // 整个是100，例如25%，wyOffset为25
+  @Input() wyLength: number;
+  @Input() wyBuffer = false;
   style: WySliderStyle = {};
   constructor() { }
 

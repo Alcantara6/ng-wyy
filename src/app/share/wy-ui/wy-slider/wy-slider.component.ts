@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy, ElementRef, ViewChild, Input, Inject, ChangeDetectorRef, OnDestroy, forwardRef } from '@angular/core';
 import { fromEvent, merge, Observable, Subscription } from 'rxjs';
-import { filter, tap, pluck, map, distinctUntilChanged, takeUntil } from 'rxjs/internal/operators';
+import { filter, tap, pluck, map, distinctUntilChanged, takeUntil, mergeMap } from 'rxjs/internal/operators';
 import { SliderEventObserverConfig, SliderValue } from './wy-slider-types';
 import { DOCUMENT } from '@angular/common';
 import { sliderEvent, getElementOffset } from './wy-slider-helper';
@@ -26,6 +26,7 @@ export class WySliderComponent implements OnInit, OnDestroy, ControlValueAccesso
   @Input() wyVertical = false;
   @Input() wyMin = 0;
   @Input() wyMax = 100;
+  @Input() bufferOffset: SliderValue = 0;  // 缓冲条进度
 
 
   private sliderDom: HTMLDivElement;
@@ -102,6 +103,11 @@ export class WySliderComponent implements OnInit, OnDestroy, ControlValueAccesso
 
 
   private subscribeDrag(events: string[] = ['start', 'move', 'end']) {
+    // 对比30天Rxjs方法和ngzorro源码写法
+    // this.dragStart$.pipe(
+    //   map((sliderValue: SliderValue) => this.setValue(sliderValue)),
+    //   mergeMap(() => this.dragMove$),
+    // ).subscribe((sliderValue: SliderValue) => this.setValueAndCheck(sliderValue));
     if (inArray(events, 'start') && this.dragStart$ && !this.dragStart_) {
       this.dragStart_ = this.dragStart$.subscribe(this.onDragStart.bind(this));
     }
@@ -143,6 +149,11 @@ export class WySliderComponent implements OnInit, OnDestroy, ControlValueAccesso
   private onDragEnd() {
     this.toggleDragMoving(false);
     this.cdr.markForCheck();  // yj: onPush策略适用（应该是offset值设置后执行吧，与模板绑定相关）
+  }
+
+  private setValueAndCheck(value: number) {
+    this.setValue(value);
+    this.cdr.markForCheck();
   }
 
 
