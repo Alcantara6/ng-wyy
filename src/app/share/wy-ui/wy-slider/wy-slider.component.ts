@@ -37,6 +37,7 @@ export class WySliderComponent implements OnInit {
   }
 
   private createDraggingObservables() {
+    // yj: 鼠标位置相对文档的位置
     const orientField = this.wyVertical ? 'pageY' : 'pageX';
     const mouse: SliderEventObserverConfig = {
       start: 'mousedown',
@@ -110,11 +111,13 @@ export class WySliderComponent implements OnInit {
     // 获取滑块总长
     const sliderLength = this.getSliderLength();
 
-    // 滑块(左, 上)端点位置
+    // 滑块(左, 上)端点相对文档的位置
     const sliderStart = this.getSliderStartPosition();
 
     // 滑块当前位置 / 滑块总长
+    // yj: position - sliderStart是当前相对于滑块（左/上）端点位置
     const ratio = limitNumberInRange((position - sliderStart) / sliderLength, 0, 1);
+    // 纵向处理
     const ratioTrue = this.wyVertical ? 1 - ratio : ratio;
     return ratioTrue * (this.wyMax - this.wyMin) + this.wyMin;
   }
