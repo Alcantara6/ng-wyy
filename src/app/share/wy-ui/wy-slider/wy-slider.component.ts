@@ -12,7 +12,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   selector: 'app-wy-slider',
   templateUrl: './wy-slider.component.html',
   styleUrls: ['./wy-slider.component.less'],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,  // 样式作用于子组件
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{
     provide: NG_VALUE_ACCESSOR,
@@ -20,6 +20,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     multi: true
   }]
 })
+/** yj: ControlValueAccessor，自定义ngModel表单数据双向绑定 */
 export class WySliderComponent implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() wyVertical = false;
   @Input() wyMin = 0;
@@ -143,22 +144,23 @@ export class WySliderComponent implements OnInit, OnDestroy, ControlValueAccesso
 
 
   private setValue(value: SliderValue, needCheck = false) {
+    // 从view传入的值，view => model
     if (needCheck) {
       if (this.isDragging) return;
       this.value = this.formatValue(value);
       this.updateTrackAndHandles();
+    // mouse或touch产生的值，model => view
     } else if (!this.valuesEqual(this.value, value)) {
       this.value = value;
       this.updateTrackAndHandles();
       this.onValueChange(this.value);
     }
-    
   }
 
 
   private formatValue(value: SliderValue): SliderValue {
     let res = value;
-    if (this.assertValueValid(value)) {
+    if (this.assertValueInValid(value)) {
       res = this.wyMin;
     }else {
       res = limitNumberInRange(value, this.wyMin, this.wyMax);
@@ -168,7 +170,7 @@ export class WySliderComponent implements OnInit, OnDestroy, ControlValueAccesso
 
 
   // 判断是否是NAN
-  private assertValueValid(value: SliderValue): boolean {
+  private assertValueInValid(value: SliderValue): boolean {
     return isNaN(typeof value !== 'number' ? parseFloat(value) : value);
   }
 
@@ -223,15 +225,18 @@ export class WySliderComponent implements OnInit, OnDestroy, ControlValueAccesso
     return this.wyVertical ? offset.top : offset.left;
   }
 
-
+  /**
+   * 以下部分为ControlValueAccessor
+   */
   private onValueChange(value: SliderValue): void {};
   private onTouched(): void {};
 
+  // view => model
   writeValue(value: SliderValue): void {
     this.setValue(value, true);
   }
 
-
+  // model => view
   registerOnChange(fn: (value: SliderValue) => void): void {
     this.onValueChange = fn;
   }
