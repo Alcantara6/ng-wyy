@@ -32,8 +32,8 @@ export class WySliderComponent implements OnInit, OnDestroy {
 
   private isDragging = false;
 
-  value: SliderValue = null;
-  offset: SliderValue = null;
+  value: SliderValue = null;   // 实际的移动距离（多余，直接在方法中作为局部变量即可）
+  offset: SliderValue = null;  // 移动相对距离（相对总长100）
 
 
   constructor(@Inject(DOCUMENT) private doc: Document, private cdr: ChangeDetectorRef) { }
@@ -81,7 +81,7 @@ export class WySliderComponent implements OnInit, OnDestroy {
         pluck(...pluckKey),
         distinctUntilChanged(),
         map((position: number) => this.findClosestValue(position)),
-        takeUntil(source.end$)
+        takeUntil(source.end$)  // 这是停止发射。与取消订阅还是两码事。
       );
     });
 
@@ -127,12 +127,12 @@ export class WySliderComponent implements OnInit, OnDestroy {
   private onDragMove(value: number) {
     if (this.isDragging) {
       this.setValue(value);
-      this.cdr.markForCheck();
+      this.cdr.markForCheck();  // yj: onPush策略适用（应该是offset值设置后执行吧，与模板绑定相关）
     }
   }
   private onDragEnd() {
     this.toggleDragMoving(false);
-    this.cdr.markForCheck();
+    this.cdr.markForCheck();  // yj: onPush策略适用（应该是offset值设置后执行吧，与模板绑定相关）
   }
 
 
@@ -141,7 +141,7 @@ export class WySliderComponent implements OnInit, OnDestroy {
       this.value = value;
       this.updateTrackAndHandles();
     }
-    
+
   }
 
   private valuesEqual(valA: SliderValue, valB: SliderValue): boolean {
@@ -154,12 +154,12 @@ export class WySliderComponent implements OnInit, OnDestroy {
 
   private updateTrackAndHandles() {
     this.offset = this.getValueToOffset(this.value);
-    this.cdr.markForCheck();
+    this.cdr.markForCheck();  // yj: 手动执行变更检测，ChangeDetectorRef对象
   }
 
 
   private getValueToOffset(value: SliderValue): SliderValue {
-    return getPercent(this.wyMin, this.wyMax, value);
+    return getPercent(this.wyMin, this.wyMax, value);  // 25%，则返回值25
   }
 
   private toggleDragMoving(movable: boolean) {
@@ -190,6 +190,7 @@ export class WySliderComponent implements OnInit, OnDestroy {
     return this.wyVertical ? this.sliderDom.clientHeight : this.sliderDom.clientWidth;
   }
 
+  /** 获取滑块当前移动距离（相对于滑轨左/上角） */
   private getSliderStartPosition(): number {
     const offset = getElementOffset(this.sliderDom);
     return this.wyVertical ? offset.top : offset.left;
