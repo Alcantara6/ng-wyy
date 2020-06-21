@@ -32,8 +32,8 @@ export class WySliderComponent implements OnInit, OnDestroy {
 
   private isDragging = false;
 
-  value: SliderValue = null;   // 实际的移动距离（多余，直接在方法中作为局部变量即可）
-  offset: SliderValue = null;  // 移动相对距离（相对总长100）
+  sliderValue: SliderValue = null;   // 实际的移动距离（作为成员变量，主要是用于新值和旧值的比较）
+  sliderOffsetPercent: SliderValue = null;  // 移动相对距离（相对总长100）
 
 
   constructor(@Inject(DOCUMENT) private doc: Document, private cdr: ChangeDetectorRef) { }
@@ -119,14 +119,14 @@ export class WySliderComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onDragStart(value: number) {
+  private onDragStart(sliderValue: number) {
     this.toggleDragMoving(true);
-    this.setValue(value);
+    this.setValue(sliderValue);
 
   }
-  private onDragMove(value: number) {
+  private onDragMove(sliderValue: number) {
     if (this.isDragging) {
-      this.setValue(value);
+      this.setValue(sliderValue);
       this.cdr.markForCheck();  // yj: onPush策略适用（应该是offset值设置后执行吧，与模板绑定相关）
     }
   }
@@ -136,9 +136,9 @@ export class WySliderComponent implements OnInit, OnDestroy {
   }
 
 
-  private setValue(value: SliderValue) {
-    if (!this.valuesEqual(this.value, value)) {
-      this.value = value;
+  private setValue(sliderValue: SliderValue) {
+    if (!this.valuesEqual(this.sliderValue, sliderValue)) {
+      this.sliderValue = sliderValue;
       this.updateTrackAndHandles();
     }
 
@@ -153,13 +153,13 @@ export class WySliderComponent implements OnInit, OnDestroy {
 
 
   private updateTrackAndHandles() {
-    this.offset = this.getValueToOffset(this.value);
+    this.sliderOffsetPercent = this.getValueToOffset(this.sliderValue);
     this.cdr.markForCheck();  // yj: 手动执行变更检测，ChangeDetectorRef对象
   }
 
 
-  private getValueToOffset(value: SliderValue): SliderValue {
-    return getPercent(this.wyMin, this.wyMax, value);  // 25%，则返回值25
+  private getValueToOffset(sliderValue: SliderValue): SliderValue {
+    return getPercent(this.wyMin, this.wyMax, sliderValue);  // 25%，则返回值25
   }
 
   private toggleDragMoving(movable: boolean) {
