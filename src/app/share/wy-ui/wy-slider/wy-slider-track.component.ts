@@ -9,7 +9,7 @@ import { WySliderStyle } from './wy-slider-types';
 })
 export class WySliderTrackComponent implements OnInit, OnChanges {
   @Input() wyVertical = false;
-  @Input() wyLength: number;
+  @Input() wyLength: number;  // 整个是100，例如25%，wyOffset为25
   style: WySliderStyle = {};
   constructor() { }
 
