@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy, ElementRef, ViewChild, Input, Inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy, ElementRef, ViewChild, Input, Inject, ChangeDetectorRef, OnDestroy, forwardRef } from '@angular/core';
 import { fromEvent, merge, Observable, Subscription } from 'rxjs';
 import { filter, tap, pluck, map, distinctUntilChanged, takeUntil } from 'rxjs/internal/operators';
 import { SliderEventObserverConfig, SliderValue } from './wy-slider-types';
@@ -6,15 +6,23 @@ import { DOCUMENT } from '@angular/common';
 import { sliderEvent, getElementOffset } from './wy-slider-helper';
 import { inArray } from 'src/app/utils/array';
 import { limitNumberInRange, getPercent } from 'src/app/utils/number';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-wy-slider',
   templateUrl: './wy-slider.component.html',
   styleUrls: ['./wy-slider.component.less'],
-  encapsulation: ViewEncapsulation.None,  // CSS样式作用于内部组件
-  changeDetection: ChangeDetectionStrategy.OnPush
+  encapsulation: ViewEncapsulation.None,  // 样式作用于子组件
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  /** ControlValueAccessor设置 */
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => WySliderComponent),
+    multi: true
+  }]
 })
-export class WySliderComponent implements OnInit, OnDestroy {
+/** yj: ControlValueAccessor，自定义ngModel表单数据双向绑定 */
+export class WySliderComponent implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() wyVertical = false;
   @Input() wyMin = 0;
   @Input() wyMax = 100;
@@ -138,12 +146,35 @@ export class WySliderComponent implements OnInit, OnDestroy {
   }
 
 
-  private setValue(sliderValue: SliderValue) {
-    if (!this.valuesEqual(this.sliderValue, sliderValue)) {
-      this.sliderValue = sliderValue;
+  private setValue(value: SliderValue, needCheck = false) {
+    // 从view传入的值，view => model
+    if (needCheck) {
+      if (this.isDragging) return;
+      this.sliderValue = this.formatValue(value);
       this.updateTrackAndHandles();
+    // mouse或touch产生的值，model => view
+    } else if (!this.valuesEqual(this.sliderValue, value)) {
+      this.sliderValue = value;
+      this.updateTrackAndHandles();
+      this.onValueChange(this.sliderValue);
     }
+  }
 
+
+  private formatValue(value: SliderValue): SliderValue {
+    let res = value;
+    if (this.assertValueInValid(value)) {
+      res = this.wyMin;
+    }else {
+      res = limitNumberInRange(value, this.wyMin, this.wyMax);
+    }
+    return res;
+  }
+
+
+  // 判断是否是NAN
+  private assertValueInValid(value: SliderValue): boolean {
+    return isNaN(typeof value !== 'number' ? parseFloat(value) : value);
   }
 
   private valuesEqual(valA: SliderValue, valB: SliderValue): boolean {
@@ -198,6 +229,26 @@ export class WySliderComponent implements OnInit, OnDestroy {
   private getSliderStartPosition(): number {
     const offset = getElementOffset(this.sliderDom);
     return this.wyVertical ? offset.top : offset.left;
+  }
+
+  /**
+   * 以下部分为ControlValueAccessor
+   */
+  private onValueChange(value: SliderValue): void {};
+  private onTouched(): void {};
+
+  // view => model
+  writeValue(value: SliderValue): void {
+    this.setValue(value, true);
+  }
+
+  // model => view
+  registerOnChange(fn: (value: SliderValue) => void): void {
+    this.onValueChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
   }
 
 
